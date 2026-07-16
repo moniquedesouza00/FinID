@@ -1,7 +1,7 @@
-# FinID: Terminal de Análise Molecular Forense
+## FinID: Terminal de Análise Molecular Forense
 O **FinID** é uma aplicação web de caráter educacional que simula um *pipeline* de genômica forense. A ferramenta foi projetada para demonstrar a aplicação do DNA Barcoding no combate ao *shark finning* (comércio ilegal de barbatanas de tubarão), operando através da identificação molecular de tecidos degradados interceptados em contexto aduaneiro.
-Devido à degradação ou excisão das características morfológicas fenotípicas durante o processamento ilegal da carcaça, a taxonomia clássica torna-se inviável. Esta aplicação fundamenta-se no protocolo de **DNA Barcoding (Código de Barras de DNA)**, adotando como marcador o fragmento do gene mitocondrial **Citocromo C Oxidase Subunidade I (COI)**.
-O veredito de embargo ou liberação da carga é processado computacionalmente com base no grau de ameaça da espécie identificada, de acordo com as métricas da **Lista Vermelha da IUCN**.
+# Devido à degradação ou excisão das características morfológicas fenotípicas durante o processamento ilegal da carcaça, a taxonomia clássica torna-se inviável. Esta aplicação fundamenta-se no protocolo de **DNA Barcoding (Código de Barras de DNA)**, adotando como marcador o fragmento do gene mitocondrial **Citocromo C Oxidase Subunidade I (COI)**.
+# O veredito de embargo ou liberação da carga é processado computacionalmente com base no grau de ameaça da espécie identificada, de acordo com as métricas da **Lista Vermelha da IUCN**.
 
 ## Arquitetura do Pipeline Simulado
 A interface gamificada orienta o usuário através das etapas essenciais de uma análise pericial:
