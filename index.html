@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinID: Salve os tubarões!</title>
+    
+    <!-- Implementação do Favicon -->
+    <link rel="icon" type="image/png" href="Black with Vision Icon Internet Logo.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Road+Rage&display=swap" rel="stylesheet">
+    <style>
+
+        :root {
+            /* Paleta Base - Tema Oceânico */
+            --bg-color: #024d60;       /* Azul Oceano Profundo */
+            --panel-bg: #D9F5F0;       /* Ciano Claro/Espuma do mar */
+            --primary: #FFFFFF;        /* Branco para contraste de interface */
+            --secondary: #024d60;      /* Azul base para elementos internos */
+            --accent: #121d30;         /* Azul Abissal (Marinho Escuro) */
+            --text-main: #121d30;      /* Texto de alto contraste nos painéis */
+            
+            --danger: #e74c3c;         /* Vermelho - Embargo de Carga */
+            --danger-hover: #c0392b;   /* Vermelho escuro - Hover */
+            --success: #18bc9c;        /* Verde - Match de DNA */
+            --success-hover: #128f76;  /* Verde escuro - Botões de ação ativa */
+            
+            --dna-font: 'Road Rage', sans-serif;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        h1 {
+            font-family: var(--dna-font);
+            font-size: 50px;
+            color: var(--primary);
+            border-bottom: 3px solid var(--panel-bg);
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .dashboard {
+            display: none; 
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2em;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        
+        .researcher-data {
+            font-size: 0.85em;
+            color: var(--panel-bg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 8px 16px rgba(18, 29, 48, 0.4);
+            margin-bottom: 20px;
+            display: none; 
+        }
+        
+        .panel.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Modal de Autenticação */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 77, 96, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--panel-bg);
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+            text-align: left;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            color: var(--secondary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+
+        .modal-content label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        /* Estilização específica do Dossiê Técnico */
+        .briefing-box {
+            background-color: var(--primary);
+            border-left: 4px solid var(--secondary);
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: var(--text-main);
+            border-radius: 0 4px 4px 0;
+        }
+        
+        /* Alerta Jurídico */
+        .warning-box {
+            background-color: #fdf2e9;
+            border-left: 4px solid var(--danger);
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: var(--danger-hover);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .technical-term {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .btn {
+            background-color: var(--secondary);
+            color: var(--primary);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 10px 0;
+            transition: background 0.3s;
+            width: 100%;
+            font-weight: bold;
+        }
+        
+        .btn:hover { 
+            background-color: #013440; 
+        }
+        
+        .btn-action { 
+            background-color: var(--accent); 
+        }
+        
+        .btn-action:hover { 
+            background-color: var(--success-hover); 
+        }
+        
+        .btn-danger { 
+            background-color: var(--danger); 
+            width: auto; 
+            margin-right: 10px;
+        }
+        
+        .btn-danger:hover { 
+            background-color: var(--danger-hover); 
+        }
+        
+        .btn-legal { 
+            width: auto; 
+            margin-right: 10px; 
+        }
+        
+        .sequence-display {
+            font-family: var(--dna-font);
+            background-color: var(--accent);
+            color: var(--primary);
+            padding: 15px;
+            border-radius: 5px;
+            letter-spacing: 2px;
+            word-wrap: break-word;
+            margin: 15px 0;
+            font-size: 1.2em;
+        }
+        
+        .match-highlight { 
+            color: var(--success); 
+            font-weight: bold; 
+        }
+        
+        .sample-grid { 
+            display: flex; 
+            gap: 10px; 
+        }
+        
+        .sample-box {
+            border: 2px dashed var(--secondary);
+            background-color: transparent;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 5px;
+            flex: 1;
+            transition: all 0.3s ease;
+            color: var(--text-main);
+            font-weight: bold;
+        }
+        
+        .sample-box:hover {
+            border-color: var(--accent);
+            background-color: var(--primary);
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(2, 77, 96, 0.1);
+        }
+        
+        .log-area {
+            font-size: 0.9em;
+            color: var(--panel-bg);
+            margin-top: 20px;
+            max-width: 800px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Modal de Autenticação do Perito -->
+    <div id="auth-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Autenticação de Terminal</h2>
+            <p>Protocolo de segurança exigido. Insira suas credenciais periciais para acessar o pipeline de análise molecular.</p>
+            
+            <label for="researcher-name">Nome do Pesquisador:</label>
+            <input type="text" id="researcher-name" placeholder="Ex: Dr. Silva" required>
+            
+            <label for="researcher-id">ID Operacional (6 dígitos):</label>
+            <input type="text" id="researcher-id" placeholder="Ex: 849309" pattern="\d{6}" maxlength="6" required>
+            
+            <button class="btn btn-action" onclick="authenticateResearcher()">Validar Credenciais</button>
+        </div>
+    </div>
+
+    <h1>FinID: Terminal de Análise Molecular no Combate ao Shark Finning</h1>
+    
+    <div class="dashboard" id="main-dashboard">
+        <div class="researcher-data">
+            <span id="display-researcher-name">Perito: Não identificado</span>
+            <span id="display-researcher-id">ID: 000000</span>
+        </div>
+        <div>Rodada: <span id="round-counter">1</span>/5</div>
+        <div>Pontuação: <span id="score-counter">0</span> pts</div>
+    </div>
+
+    <!-- Fase 0: Contexto e Briefing -->
+    <div id="phase-0" class="panel active">
+        <h2>Dossiê Técnico: Operação Aduaneira</h2>
+        
+        <div class="briefing-box">
+            <p><strong>O Problema:</strong> O comércio ilegal global de barbatanas de tubarão<strong><i>(<em>Shark Finning</em>)</i></strong> movimenta toneladas de material biológico não identificado anualmente.</p>
+            <p>O processamento dessas carcaças envolve a excisão das barbatanas e descarte do corpo do animal no oceano. Ao chegarem aos portos, o <span class="technical-term">diagnóstico morfológico</span> das espécies se torna impossível devido à degradação dos caracteres taxonômicos fenotípicos.</p>
+            
+            <p><strong> Como perito em Biotecnologia, você irá utilizar o protocolo de <span class="technical-term">DNA Barcoding (Código de Barras de DNA).</span></strong> Esta técnica de taxonomia genômica adota fragmentos curtos e padronizados do DNA mitocondrial para identificar espécies de forma precisa.</p>
+            <p>Com base no status da <strong><span style="color: #e74c3c;">Lista Vermelha da IUCN</span></strong> retornado pelo alinhamento, <b>você determinará o embargo jurídico ou a liberação da carga.</b></p>
+        </div>
+        <div class="warning-box">
+            ⚠️ <b>ALERTA DE FISCALIZAÇÃO:</b> O que é legalizado é a pesca e a comercialização de barbatanas de certas espécies, sob a condição obrigatória de que a carcaça seja desembarcada integralmente junto com as nadadeiras.
+        </div>
+        <h3>Protocolo Operacional Padrão (POP)</h3>
+        <ul>
+            <li><strong>Alvo Molecular:</strong> Gene mitocondrial <strong><i>Citocromo C Oxidase Subunidade I</i></strong> (<span class="technical-term">COI</span>).</li>
+            <li><strong>Passo 1:</strong> Selecionar amostra de tecido degradado no lote apreendido.</li>
+            <li><strong>Passo 2:</strong> Executar extração genômica e a <span class="technical-term">amplificação in vitro (PCR)</span> seguida de sequenciamento.</li>
+            <li><strong>Passo 3:</strong> Submeter os dados brutos a algoritmos de alinhamento heurístico contra o banco de dados genômicos de referência <strong>(BOLD Systems).</strong></li>
+        </ul>
+
+
+        <button class="btn btn-action" onclick="startGame()">Inicializar Plataforma de Bioinformática</button>
+    </div>
+
+    <!-- Fase 1: Triagem -->
+    <div id="phase-1" class="panel">
+        <h2>Fase 1: Triagem Aduaneira</h2>
+        <p>Lote interceptado. Morfologia degradada. Selecione um fragmento de tecido para extração genômica.</p>
+        <div class="sample-grid" id="sample-grid">
+            <!-- Gerado via JS -->
+        </div>
+    </div>
+
+    <!-- Fase 2: Laboratório (Extração e PCR) -->
+    <div id="phase-2" class="panel">
+        <h2>Fase 2: Processamento Molecular</h2>
+        <p>Amostra isolada. Necessário amplificar o locus mitocondrial COI para identificação taxonômica.</p>
+        <button class="btn btn-action" onclick="runPCR()">Executar PCR e Sequenciamento</button>
+        <div id="sequencing-output" style="display:none;">
+            <p><strong>Output Bruto (Formato FASTA):</strong></p>
+            <div class="sequence-display" id="dna-sequence"></div>
+            <button class="btn" onclick="goToPhase3()">Submeter ao BOLD Systems (Alinhamento in silico)</button>
+        </div>
+    </div>
+
+    <!-- Fase 3: Alinhamento e Veredito -->
+    <div id="phase-3" class="panel">
+        <h2>Fase 3: Alinhamento e Veredito (Taxonomia Genômica)</h2>
+        <p>Resultado do alinhamento par a par com o banco de referência:</p>
+        <div class="sequence-display">
+            Query (Amostra): <span id="align-query"></span><br>
+            Match (Sujeito):  <span id="align-subject" class="match-highlight"></span>
+        </div>
+        <h3 id="species-result">Espécie identificada: ...</h3>
+        <p id="iucn-status">Status IUCN: ...</p>
+        
+        <hr>
+        <p><strong>Parecer Técnico:</strong> Baseado na homologia das sequências, qual o veredito para este lote?</p>
+        <button class="btn btn-action btn-legal" onclick="makeVerdict('legal')">Liberar (Espécie de Baixo Risco - Comércio Legal)</button>
+        <button class="btn btn-danger" onclick="makeVerdict('illegal')">Embargar Carga (Espécie Ameaçada - Possível caso de <i>Shark Finning</i>)</button>
+    </div>
+
+    <div class="log-area" id="log-area"></div>
+
+    <script>
+        const database = [
+            { 
+                id: 'Sphyrna_lewini', 
+                name: 'Tubarão-martelo-recortado (Sphyrna lewini)', 
+                seq: 'ATCGGCTATATCCTA', 
+                iucn: 'Criticamente em Perigo (CR)', 
+                isLegal: false 
+            },
+            { 
+                id: 'Carcharhinus_longimanus', 
+                name: 'Tubarão-galha-branca-oceânico (Carcharhinus longimanus)', 
+                seq: 'ATCGGCTAGATCCTA', 
+                iucn: 'Criticamente em Perigo (CR)', 
+                isLegal: false 
+            },
+            { 
+                id: 'Rhizoprionodon_terraenovae', 
+                name: 'Tubarão-bico-fino (Rhizoprionodon terraenovae)', 
+                seq: 'ATCGGCAATATTCGA', 
+                iucn: 'Pouco Preocupante (LC)', 
+                isLegal: true 
+            },
+            { 
+                id: 'Prionace_glauca', 
+                name: 'Tubarão-azul (Prionace glauca)', 
+                seq: 'ATCCGCTATAACCTA', 
+                iucn: 'Quase Ameaçada (NT)', 
+                isLegal: true
+            },
+            { 
+                id: 'Carcharhinus_falciformis', 
+                name: 'Tubarão-seda (Carcharhinus falciformis)', 
+                seq: 'ATGCGATTATTTACACTG', 
+                iucn: 'Vulnerável (VU)', 
+                isLegal: false
+            },
+            { 
+                id: 'Galeocerdo_cuvier', 
+                name: 'Tubarão-tigre (Galeocerdo cuvier)', 
+                seq: 'ATGCGAATATTTACACTG', 
+                iucn: 'Quase Ameaçado (NT)', 
+                isLegal: true
+            },
+            { 
+                id: 'Rhizoprionodon_terraenovae', 
+                name: 'Cação-frango-do-atlântico (Rhizoprionodon terraenovae)', 
+                seq: 'ATGCGTATATTTACACTC', 
+                iucn: 'Pouco Preocupante (LC)', 
+                isLegal: true
+            },
+            { 
+                id: 'Isurus_oxyrinchus', 
+                name: 'Tubarão-anequim (Isurus oxyrinchus)', 
+                seq: 'ATGCGAACATTTACACTA', 
+                iucn: 'Em Perigo (EN)', 
+                isLegal: false
+            }
+
+        ];
+
+        let currentRound = 1;
+        const maxRounds = 5;
+        let score = 0;
+        let activeSample = null;
+        let authName = "";
+        let authID = "";
+
+        // Função de Validação do Perito
+        function authenticateResearcher() {
+            const nameInput = document.getElementById('researcher-name').value;
+            const idInput = document.getElementById('researcher-id').value;
+            
+            const idRegex = /^\d{6}$/;
+
+            if (nameInput.trim() === "" || !idRegex.test(idInput)) {
+                alert("Falha de autenticação. É obrigatório inserir um nome válido e um ID operacional contendo exatamente 6 dígitos numéricos.");
+                return;
+            }
+
+            authName = nameInput;
+            authID = idInput;
+
+            document.getElementById('display-researcher-name').innerText = `Perito: ${authName}`;
+            document.getElementById('display-researcher-id').innerText = `ID: ${authID}`;
+            
+            document.getElementById('auth-modal').style.display = 'none';
+            logInfo(`Credenciais validadas. Sessão de análise iniciada para ${authName} [ID: ${authID}].`);
+        }
+
+        function startGame() {
+            document.getElementById('main-dashboard').style.display = 'flex';
+            logInfo(`Sistema inicializado. Carregando bibliotecas de análise genética...`);
+            initRound();
+        }
+
+        function initRound() {
+            if (currentRound > maxRounds) {
+                endGame();
+                return;
+            }
+            document.getElementById('round-counter').innerText = currentRound;
+            document.getElementById('sequencing-output').style.display = 'none';
+            document.getElementById('dna-sequence').innerText = '';
+            
+            const grid = document.getElementById('sample-grid');
+            grid.innerHTML = '';
+            for(let i=1; i<=3; i++) {
+                let div = document.createElement('div');
+                div.className = 'sample-box';
+                div.innerText = `Lote tecidual #${Math.floor(Math.random() * 1000)}`;
+                div.onclick = () => selectSample(div);
+                grid.appendChild(div);
+            }
+            
+            showPanel('phase-1');
+        }
+
+        function showPanel(panelId) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+        }
+
+        function logInfo(msg) {
+            const log = document.getElementById('log-area');
+            log.innerHTML = `> [${new Date().toLocaleTimeString()}] ${msg}<br>` + log.innerHTML;
+        }
+
+        function selectSample(element) {
+            activeSample = database[Math.floor(Math.random() * database.length)];
+            logInfo(`Amostra selecionada. Lise celular em andamento.`);
+            showPanel('phase-2');
+        }
+
+        function runPCR() {
+            logInfo(`Amplificação (PCR) do locus COI concluída. Iniciando sequenciamento...`);
+            setTimeout(() => {
+                document.getElementById('dna-sequence').innerText = `>Amostra_Desconhecida\n${activeSample.seq}`;
+                document.getElementById('sequencing-output').style.display = 'block';
+            }, 800);
+        }
+
+        function goToPhase3() {
+            logInfo(`Algoritmo executando alinhamento de nucleotídeos...`);
+            document.getElementById('align-query').innerText = activeSample.seq;
+            document.getElementById('align-subject').innerText = activeSample.seq; 
+            document.getElementById('species-result').innerText = `Espécie Identificada: ${activeSample.name}`;
+            document.getElementById('iucn-status').innerText = `Status na Lista Vermelha IUCN: ${activeSample.iucn}`;
+            showPanel('phase-3');
+        }
+
+        function makeVerdict(decision) {
+            const isCorrect = (decision === 'legal' && activeSample.isLegal) || (decision === 'illegal' && !activeSample.isLegal);
+            
+            if (isCorrect) {
+                score += 100;
+                alert(`Decisão Correta! O parecer pericial foi fundamentado com sucesso.`);
+                logInfo(`SUCESSO: Análise taxonômica precisa.`);
+            } else {
+                score -= 50;
+                alert(`Erro de Perícia! O parecer divergiu dos dados moleculares obtidos.`);
+                logInfo(`FALHA: Má interpretação do alinhamento de sequências.`);
+            }
+            
+            document.getElementById('score-counter').innerText = score;
+            currentRound++;
+            initRound();
+        }
+
+        function endGame() {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.body.innerHTML += `
+                <div class="panel active" style="text-align: center;">
+                    <h2>Relatório Técnico Final</h2>
+                    <p>Pontuação de Impacto: <strong>${score}</strong> pontos</p>
+                    <p><b><span class="technical-term">A aplicação rigorosa de pipelines de bioinformática e genômica é fundamental para viabilizar a fiscalização alfandegária e a conservação de populações marinhas vulneráveis.</span></b></p>
+                    <button class="btn btn-action" onclick="location.reload()">Reiniciar Protocolo Padrão</button>
+                </div>
+            `;
+            document.getElementById('phase-1').style.display = 'none';
+            document.getElementById('phase-2').style.display = 'none';
+            document.getElementById('phase-3').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
